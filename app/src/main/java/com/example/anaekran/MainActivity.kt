@@ -54,10 +54,15 @@ class MainActivity : Activity() {
                 )
             }
 
-        apps.sortBy { it.name.lowercase(Locale.getDefault()) }
+        apps.sortBy {
+            it.name.lowercase(Locale.getDefault())
+        }
     }
 
-    private fun background(color: Int, radius: Float): GradientDrawable {
+    private fun background(
+        color: Int,
+        radius: Float
+    ): GradientDrawable {
         return GradientDrawable().apply {
             setColor(color)
             cornerRadius = radius
@@ -65,6 +70,7 @@ class MainActivity : Activity() {
     }
 
     private fun createHomeScreen() {
+
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(22, 24, 22, 12)
@@ -72,9 +78,16 @@ class MainActivity : Activity() {
         }
 
         val clock = TextView(this).apply {
-            text = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+            text = SimpleDateFormat(
+                "HH:mm",
+                Locale.getDefault()
+            ).format(Date())
+
             textSize = 58f
-            typeface = Typeface.create("sans-serif-light", Typeface.NORMAL)
+            typeface = Typeface.create(
+                "sans-serif-light",
+                Typeface.NORMAL
+            )
             setTextColor(Color.WHITE)
             gravity = Gravity.CENTER
         }
@@ -109,34 +122,46 @@ class MainActivity : Activity() {
             textSize = 15f
             setTextColor(Color.WHITE)
             setHintTextColor(Color.GRAY)
-            singleLine = true
+
+            setSingleLine(true)
+
             background = background(
-                Color.rgb(43, 44, 58), 40f
+                Color.rgb(43, 44, 58),
+                40f
             )
+
             setPadding(18, 5, 18, 5)
         }
 
         root.addView(
             search,
             LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, 52
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                52
             )
         )
 
         search.addTextChangedListener(object : TextWatcher {
+
             override fun beforeTextChanged(
-                s: CharSequence?, start: Int,
-                count: Int, after: Int
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
             ) {}
 
             override fun onTextChanged(
-                s: CharSequence?, start: Int,
-                before: Int, count: Int
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
             ) {
                 showApps(s.toString())
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(
+                s: Editable?
+            ) {}
         })
 
         val scroll = ScrollView(this)
@@ -151,35 +176,48 @@ class MainActivity : Activity() {
         root.addView(
             scroll,
             LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                1f
             )
         )
 
         val dock = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
+
             background = background(
-                Color.rgb(43, 44, 58), 35f
+                Color.rgb(43, 44, 58),
+                35f
             )
+
             setPadding(12, 12, 12, 12)
         }
 
         root.addView(
             dock,
             LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, 75
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                75
             )
         )
 
-        val dockNames = listOf("Telefon", "Mesajlar", "Kamera", "Ayarlar")
+        val dockNames = listOf(
+            "Telefon",
+            "Mesajlar",
+            "Kamera",
+            "Ayarlar"
+        )
 
         dockNames.forEach { name ->
+
             val item = TextView(this).apply {
                 text = name
                 textSize = 11f
                 gravity = Gravity.CENTER
                 setTextColor(Color.WHITE)
                 setPadding(5, 8, 5, 8)
+
                 setOnClickListener {
                     openAppByName(name)
                 }
@@ -187,7 +225,11 @@ class MainActivity : Activity() {
 
             dock.addView(
                 item,
-                LinearLayout.LayoutParams(0, 55, 1f)
+                LinearLayout.LayoutParams(
+                    0,
+                    55,
+                    1f
+                )
             )
         }
 
@@ -195,13 +237,18 @@ class MainActivity : Activity() {
     }
 
     private fun showApps(query: String) {
+
         appGrid.removeAllViews()
 
         val filtered = apps.filter {
-            it.name.contains(query, ignoreCase = true)
+            it.name.contains(
+                query,
+                ignoreCase = true
+            )
         }
 
         filtered.forEach { app ->
+
             val item = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER
@@ -215,7 +262,10 @@ class MainActivity : Activity() {
 
             item.addView(
                 icon,
-                LinearLayout.LayoutParams(55, 55)
+                LinearLayout.LayoutParams(
+                    55,
+                    55
+                )
             )
 
             val label = TextView(this).apply {
@@ -230,13 +280,17 @@ class MainActivity : Activity() {
             item.addView(
                 label,
                 LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, 38
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    38
                 )
             )
 
             item.setOnClickListener {
+
                 val launch = packageManager
-                    .getLaunchIntentForPackage(app.packageName)
+                    .getLaunchIntentForPackage(
+                        app.packageName
+                    )
 
                 if (launch != null) {
                     startActivity(launch)
@@ -248,8 +302,10 @@ class MainActivity : Activity() {
                 GridLayout.LayoutParams().apply {
                     width = 0
                     height = ViewGroup.LayoutParams.WRAP_CONTENT
+
                     columnSpec = GridLayout.spec(
-                        GridLayout.UNDEFINED, 1f
+                        GridLayout.UNDEFINED,
+                        1f
                     )
                 }
             )
@@ -257,6 +313,7 @@ class MainActivity : Activity() {
     }
 
     private fun openAppByName(name: String) {
+
         val target = when (name) {
             "Telefon" -> "com.google.android.dialer"
             "Mesajlar" -> "com.google.android.apps.messaging"
@@ -272,7 +329,8 @@ class MainActivity : Activity() {
             startActivity(launch)
         } else {
             Toast.makeText(
-                this, "$name bulunamadı",
+                this,
+                "$name bulunamadı",
                 Toast.LENGTH_SHORT
             ).show()
         }
